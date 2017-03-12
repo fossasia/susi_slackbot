@@ -1,8 +1,8 @@
 # AskSusi Messengers
 
-[![Build Status](https://travis-ci.org/fossasia/asksusi_messengers.svg?branch=development)](https://travis-ci.org/fossasia/asksusi_messengers)
-[![CircleCI](https://img.shields.io/circleci/project/fossasia/asksusi_messengers.svg?maxAge=2592000?style=flat-square)](https://circleci.com/gh/fossasia/asksusi_messengers)
-[![Code Climate](https://codeclimate.com/github/fossasia/asksusi_messengers/badges/gpa.svg)](https://codeclimate.com/github/fossasia/asksusi_messengers)
+[![Build Status](https://travis-ci.org/fossasia/susi_slackbot.svg?branch=development)](https://travis-ci.org/fossasia/susi_slackbot)
+[![CircleCI](https://img.shields.io/circleci/project/fossasia/susi_slackbot.svg?maxAge=2592000?style=flat-square)](https://circleci.com/gh/fossasia/susi_slackbot)
+[![Code Climate](https://codeclimate.com/github/fossasia/susi_slackbot/badges/gpa.svg)](https://codeclimate.com/github/fossasia/susi_slackbot)
 
 AskSusi is a messenger bot that answers your question by using big data from loklak and a number of API services. In this repository we keep AskSusi chatbots for social media platforms. We have integrated AskSusi on Facebook Messenger, Slack and Telegram. All of the messenger bots work from one central ```index.js``` file, and run from one URL (with different paths). The type of questions Susi can currently answer can be found in the [loklak documentation here](https://github.com/loklak/loklak_server/blob/development/docs/AskSUSI.md). 
 
