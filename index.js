@@ -19,14 +19,14 @@ app.use(bodyParser.json());
 // recommended to inject access tokens as environmental variables, e.g.
 var token = process.env.FB_PAGE_ACCESS_TOKEN;
 var telegramToken = process.env.TELEGRAM_ACCESS_TOKEN;
-var slack_webhook_url = process.env.SLACK_WEBHOOK_URL; //url of incoming webhook
+var slack_webhook_url = 'https://susi-kik.herokuapp.com/' //url of incoming webhook
 var heroku_deploy_url = (process.env.HEROKU_URL)||("https://damp-everglades-14739.herokuapp.com/"); //url of heroku deployment
 // Setup polling way
 var bot = new TelegramBot(telegramToken, {polling: true});
 // const token = "<PAGE_ACCESS_TOKEN>"
-var slack_token = process.env.SLACK_TOKEN;
+var slack_token = 'xoxb-185920210817-emzvFPZLXIVEIRcGMeFIagW9';
 var slack_bot = new SlackBot({
-	token: slack_token, 
+	token: slack_token,
 	name: 'susi'
 })
 var payload;
@@ -37,7 +37,7 @@ var slack = new Slack(slack_webhook_url);
 
 function sendTextMessage(sender, text) {
 	var messageData = { text:text };
-	
+
 	request({
 		url: 'https://graph.facebook.com/v2.6/me/messages',
 		qs: {access_token:token},
@@ -144,7 +144,7 @@ app.post('/webhook/', function (req, res) {
 
 // TELEGRAM SERVICE FOR SUSI
 // ----------------------------------------------------------------------------------------------------------------
-// Matches /start 
+// Matches /start
 bot.onText(/\/start/, function (msg, match) {
 	var fromId = msg.from.id;
 	var resp = 'Hi, I am Susi, You can ask me anything !';
@@ -195,11 +195,11 @@ function slackbot(){
 			}
 		}
 		if(msg != null && channel !=null){
-			var botid = '<@U1UK6DANT>:' 
+			var botid = '<@U1UK6DANT>:'
 			if (msg.split(" ")[0] != botid){
 			//do nothing
 		} else{
-			var apiurl = 'http://loklak.org/api/susi.json?q=' + msg;
+			var apiurl = 'http://api.asksusi.com/susi/chat.json?q=' + msg;
 			var payload;
 			request(apiurl, function (error, response, body) {
 				if (!error && response.statusCode === 200) {
