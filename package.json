@@ -1,20 +1,15 @@
 {
-  "name": "asksusisu",
+  "name": "slack-bot",
   "version": "1.0.0",
-  "description": "",
+  "description": "SUSI Slack Bot",
   "main": "index.js",
-  "scripts": {
-    "test": "node tests/sample.js"
-  },
-  "author": "",
-  "license": "MIT",
   "dependencies": {
-    "body-parser": "^1.15.2",
-    "express": "^4.14.0",
-    "node-slackr": "^0.1.4",
-    "node-telegram-bot-api": "^0.23.3",
-    "request": "^2.74.0",
-    "requestify": "^0.1.17",
-    "slackbots": "^0.5.2"
+    "@slack/client": "^3.10.0",
+    "express": "^4.15.3",
+    "http": "0.0.0",
+    "request": "^2.81.0"
+  },
+  "scripts": {
+    "start": "node index.js"
   }
 }
