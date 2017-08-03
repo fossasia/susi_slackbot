@@ -1,5 +1,0 @@
-apiVersion: v1
-metadata:
-  name: susi-slackbot
-  namespace: slackbot
-kind: ConfigMap
