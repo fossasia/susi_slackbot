@@ -1,0 +1,22 @@
+kind: Deployment
+apiVersion: apps/v1beta1
+metadata:
+  name: susi-slackbot
+  namespace: slackbot
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: susi-slackbot
+    spec:
+      containers:
+      - name: susi-slackbot
+        image: fossasia/susi_slackbot:latest-development
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: susi-slackbot
+      restartPolicy: Always
