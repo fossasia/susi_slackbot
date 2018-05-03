@@ -14,13 +14,14 @@ rtm.start();
 
 rtm.on(RTM_EVENTS.MESSAGE, function(message) {
   var channel = message.channel;
-
+  var text=message.text;
   var options = {
         method: 'GET',
-        url: 'http://api.asksusi.com/susi/chat.json',
+        url: 'https://api.susi.ai/susi/chat.json',
         qs: {
             timezoneOffset: '-330',
-            q: message.text
+            q: text,
+            language:"en"
         }
     };
 //sending request to SUSI API for response
