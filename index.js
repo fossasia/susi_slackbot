@@ -1,5 +1,6 @@
 var Slack = require('@slack/client');
 var request = require('request');
+const {CLIENT_EVENTS,WebClient } = require('slack/client');
 var express = require('express');
 var http = require('http');
 var app = express();
@@ -8,13 +9,18 @@ var RtmClient = Slack.RtmClient;
 var RTM_EVENTS = Slack.RTM_EVENTS;
 
 var token = process.env.slackToken||config.slackToken;
-
+var appData={};
 var rtm = new RtmClient(token, { logLevel: 'info' });
 rtm.start();
-
+rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, (connectData) => {
+  // Cache the data necessary for this app in memory
+  appData.selfId = connectData.self.id;
+});
 rtm.on(RTM_EVENTS.MESSAGE, function(message) {
   var channel = message.channel;
   var text=message.text;
+  //send reply only when mentioned or in direct message
+  if(text && message.user!==appData.selfId && (text.indexOf(appData.selfId)!==-1 || channel.startsWith('D'))){
   var options = {
         method: 'GET',
         url: 'https://api.susi.ai/susi/chat.json',
@@ -65,6 +71,7 @@ rtm.on(RTM_EVENTS.MESSAGE, function(message) {
             }
         }
     })
+}
 });
 
 const port = process.env.PORT || 8080;
