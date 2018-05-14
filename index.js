@@ -21,6 +21,7 @@ rtm.on(RTM_EVENTS.MESSAGE, function(message) {
   var text=message.text;
   //send reply only when mentioned or in direct message
   if(text && message.user!==appData.selfId && (text.indexOf(appData.selfId)!==-1 || channel.startsWith('D'))){
+
   var options = {
         method: 'GET',
         url: 'https://api.susi.ai/susi/chat.json',
