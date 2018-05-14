@@ -1,5 +1,6 @@
 var Slack = require('@slack/client');
 var request = require('request');
+const {CLIENT_EVENTS,WebClient } = require('slack/client');
 var express = require('express');
 var http = require('http');
 var app = express();
@@ -8,48 +9,53 @@ var RtmClient = Slack.RtmClient;
 var RTM_EVENTS = Slack.RTM_EVENTS;
 
 var token = process.env.slackToken||config.slackToken;
-
+var appData={};
 var rtm = new RtmClient(token, { logLevel: 'info' });
 rtm.start();
-
+rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, (connectData) => {
+  // Cache the data necessary for this app in memory
+  appData.selfId = connectData.self.id;
+});
 rtm.on(RTM_EVENTS.MESSAGE, function(message) {
   var channel = message.channel;
-
+  var text=message.text;
+  //send reply only when mentioned or in direct message
+  if(text && message.user!==appData.selfId && (text.indexOf(appData.selfId)!==-1 || channel.startsWith('D'))){
   var options = {
         method: 'GET',
-        url: 'http://api.asksusi.com/susi/chat.json',
+        url: 'https://api.susi.ai/susi/chat.json',
         qs: {
             timezoneOffset: '-330',
-            q: message.text
+            q: text,
+            language:"en"
         }
     };
 //sending request to SUSI API for response
-    request(options, function(error, response, body) {
-        if (error){
-            msg = "Oops, looks like SUSI is taking a break, She will be back soon";
-            rtm.sendMessage(msg, channel);
-        } else {
-            var type = (JSON.parse(body)).answers[0].actions;
-		    var msg;
-            if (type.length == 1 && type[0].type == "answer" && message.text != "" && message.text != " ") {
-                msg = (JSON.parse(body)).answers[0].actions[0].expression;
+request(options, function(error, response, body) {
+    if (error){
+        msg = "Oops, looks like SUSI is taking a break, She will be back soon";
+        rtm.sendMessage(msg, channel);
+    } else {
+      var msg;
+      var actions=(JSON.parse(body)).answers[0].actions;
+      actions.forEach(function(action) {
+        var type=action.type;
+         if (type==='table') {
+            var data = (JSON.parse(body)).answers[0].data;
+            var columns = type[0].columns;
+            var key = Object.keys(columns);
+            var count = (JSON.parse(body)).answers[0].metadata.count;
+
+            for (var i = 0; i < count ; i++) {
+                msg = key[0].toUpperCase() + ": " + data[i][key[0]] + "\n" + key[1].toUpperCase() + ": " + data[i][key[1]] + "\n" + key[2].toUpperCase() + ": " + data[i][key[2]];
                 rtm.sendMessage(msg, channel);
-            } else if (type.length == 1 && type[0].type == "table") {
-                var data = (JSON.parse(body)).answers[0].data;
-                var columns = type[0].columns;
-                var key = Object.keys(columns);
-                var count = (JSON.parse(body)).answers[0].metadata.count;
+            }
+        } else if (type === 'rss'){
+            var data = JSON.parse(body).answers[0].data;
+            var columns = type[1];
+            var key = Object.keys(columns);
 
-                for (var i = 0; i < count ; i++) {
-                    msg = key[0].toUpperCase() + ": " + data[i][key[0]] + "\n" + key[1].toUpperCase() + ": " + data[i][key[1]] + "\n" + key[2].toUpperCase() + ": " + data[i][key[2]];
-                    rtm.sendMessage(msg, channel);
-                }
-            } else if (type.length == 2 && type[1].type == "rss"){
-                var data = JSON.parse(body).answers[0].data;
-                var columns = type[1];
-                var key = Object.keys(columns);
-
-                for (var i = 0; i < 4; i++) {
+            for (var i = 0; i < 4; i++) {
                 if(i==0){
                     msg = (JSON.parse(body)).answers[0].actions[0].expression;
                     rtm.sendMessage(msg, channel);
@@ -60,10 +66,14 @@ rtm.on(RTM_EVENTS.MESSAGE, function(message) {
                     rtm.sendMessage(msg, channel);
                     console.log("check");
                 }
-                }
             }
         }
-    })
+        else{// for type answer
+            msg = action.expression;
+            rtm.sendMessage(msg, channel);
+        }
+    });
+}
 });
 
 const port = process.env.PORT || 8080;
