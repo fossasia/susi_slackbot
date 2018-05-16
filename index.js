@@ -41,20 +41,23 @@ request(options, function(error, response, body) {
       actions.forEach(function(action) {
         var type=action.type;
          if (type==='table') {
-            var data = (JSON.parse(body)).answers[0].data;
-            var columns = type[0].columns;
-            var key = Object.keys(columns);
-            var count = (JSON.parse(body)).answers[0].metadata.count;
-
-            for (var i = 0; i < count ; i++) {
-                msg = key[0].toUpperCase() + ": " + data[i][key[0]] + "\n" + key[1].toUpperCase() + ": " + data[i][key[1]] + "\n" + key[2].toUpperCase() + ": " + data[i][key[2]];
-                rtm.sendMessage(msg, channel);
-            }
+            var tableData = (JSON.parse(body)).answers[0].data;
+            var columnsObj=action.columns;
+            var maxRows=100;
+            let columns = Object.keys(columnsObj);
+            var columnsData = Object.values(columnsObj);
+            var msgs="";
+            tableData.forEach(function(row,index) {
+                if(row[columns[0]] && index<maxRows){
+                    let msg = "*"+row[columns[0]]+"*" + ", " + row[columns[1]] + "\n" + row[columns[2]]+ "\n ";
+                    msgs=msgs+msg;
+                }
+            });
+            rtm.sendMessage(msgs, channel);
         } else if (type === 'rss'){
             var data = JSON.parse(body).answers[0].data;
             var columns = type[1];
             var key = Object.keys(columns);
-
             for (var i = 0; i < 4; i++) {
                 if(i==0){
                     msg = (JSON.parse(body)).answers[0].actions[0].expression;
@@ -73,6 +76,8 @@ request(options, function(error, response, body) {
             rtm.sendMessage(msg, channel);
         }
     });
+}
+});
 }
 });
 
