@@ -21,4 +21,4 @@ For making your own Slack Bot for Susi, please check out the [Installation docum
 
 ## License
 
-This project is licensed under the GNU GENERAL PUBLIC LICENSE, Version 3. Please find more info in our [license document](LICENSE.md).
+This project is licensed under the GNU GENERAL PUBLIC LICENSE, Version 3. Please find more info in our [license document](LICENSE).
